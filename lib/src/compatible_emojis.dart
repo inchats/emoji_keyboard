@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
 import 'all_emojis.dart';
@@ -37,30 +36,12 @@ void _emojiDispatcher(Emoji emoji) {
 
 typedef Compatible = bool Function(Emoji emoji, String? systemVersion);
 
-Future<bool> _getCompatibleEmojis(String? systemVersion) async {
-  final _deviceInfoPlugin = DeviceInfoPlugin();
-
-  Compatible isCompatible;
-
-  if (isAndroid()) {
-    systemVersion ??= (await _deviceInfoPlugin.androidInfo).version.release;
-    isCompatible = Emoji.isAndroidCompatible;
-  } else if (isIOS()) {
-    systemVersion ??= (await _deviceInfoPlugin.iosInfo).systemVersion;
-    isCompatible = Emoji.isIOSCompatible;
-  } else {
-    isCompatible = (_, __) => true;
-  }
-
+Future<bool> _getCompatibleEmojis() async {
   for (final emoji in emojiList) {
-    if (isCompatible(emoji, systemVersion)) {
-      _emojiDispatcher(emoji);
-      emoji.diversityChildren.forEach((childEmoji) {
-        if (isCompatible(childEmoji, systemVersion)) {
-          _emojiDispatcher(childEmoji);
-        }
-      });
-    }
+    _emojiDispatcher(emoji);
+    emoji.diversityChildren.forEach((childEmoji) {
+      _emojiDispatcher(childEmoji);
+    });
   }
   return true;
 }
@@ -78,9 +59,9 @@ bool isIOS() {
 bool _loaded = false;
 final List<List<Emoji>> _emojis = List.generate(8, (_) => <Emoji>[]);
 
-Future<List<List<Emoji>>> getEmojis({String? systemVersion}) async {
+Future<List<List<Emoji>>> getEmojis() async {
   if (!_loaded) {
-    _loaded = await _getCompatibleEmojis(systemVersion);
+    _loaded = await _getCompatibleEmojis();
   }
   return _emojis;
 }

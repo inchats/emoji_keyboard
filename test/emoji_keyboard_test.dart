@@ -1,16 +1,10 @@
 // A basic test to find keyboard is shown and header bottons work.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_emoji_keyboard/src/compatible_emojis.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('emojis are compatible', () async {
-    final emojiList = await getEmojis(systemVersion: '15');
-    expect(emojiList[0], isNotEmpty);
-  });
-
   // todo: first good issue
   testWidgets('keyboard is shown and header bottons work',
       (WidgetTester tester) async {
